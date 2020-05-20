@@ -57,7 +57,9 @@ import com.jme3.texture.Texture;
 public class HelloPinball extends SimpleApplication {
 
     private boolean flip;
+    private boolean flipping;
     private boolean flip2;
+    private boolean flipping2;
     private float flipper2_geo_angle;
     private float flipper_geo_angle;
     private ChaseCamera chaser;
@@ -204,30 +206,30 @@ public class HelloPinball extends SimpleApplication {
 					if (nonBoule==b) normal=normal.negate();
 					
 					if (nonBoule.getObjectId()==lanceur_phy.getObjectId()) {
-						boule_phy.setLinearVelocity(new Vector3f(-23,0,0));
+						boule_phy.setLinearVelocity(new Vector3f(-23+(float)Math.random(),0,0));
 					}
 					if (nonBoule.getObjectId()==flipper_phy.getObjectId()) {
-						collision(boule_phy,flipper_phy,normal);
+						collision(boule_phy,flipper_phy,normal,flipping);
 					}
 					if (nonBoule.getObjectId()==flipper2_phy.getObjectId()) {
-						collision(boule_phy,flipper2_phy,normal);
+						collision(boule_phy,flipper2_phy,normal,flipping2);
 					}
 					if (nonBoule.getObjectId()==flipper3_phy.getObjectId()) {
-						collision(boule_phy,flipper3_phy,normal);
+						collision(boule_phy,flipper3_phy,normal,flipping);
 					}
 					if (nonBoule.getObjectId()==flipper4_phy.getObjectId()) {
-						collision(boule_phy,flipper4_phy,normal);
+						collision(boule_phy,flipper4_phy,normal,flipping2);
 					}
 					if (nonBoule.getObjectId()==flipper5_phy.getObjectId()) {
-						boule_phy.setLinearVelocity(new Vector3f(-10,0,0));
-						collision(boule_phy,flipper5_phy,normal);
+						collision(boule_phy,flipper5_phy,normal,flipping);
 					}
 					if (nonBoule.getObjectId()==flipper6_phy.getObjectId()) {
-						collision(boule_phy,flipper6_phy,normal);
+						collision(boule_phy,flipper6_phy,normal,flipping2);
 					}
 				}
 
-				private void collision(RigidBodyControl boule_phy, RigidBodyControl flipper_phy,Vector3f normal) {
+				private void collision(RigidBodyControl boule_phy, RigidBodyControl flipper_phy,Vector3f normal,boolean flipping) {
+					if (!flipping) return;
 					// flipper_phy.getLinearVelocity() toujours à 0,0,0 j'utilise normal du coup.
 					Vector3f Vab = boule_phy.getLinearVelocity().subtract(normal).add(new Vector3f(-10,0,0));
 					Vab.setY(0);
@@ -284,14 +286,18 @@ public class HelloPinball extends SimpleApplication {
     		
     		if (flip) {
     			if (flipper_geo_angle<=Math.PI/2+1.1f) {
+	    			flipping=true;
 	    			// ça c'est fixe.
 	    			flipper_geo_angle+=0.003f;
 	        		flipper_phy.setPhysicsRotation(new Quaternion().fromAngles(0,flipper_geo_angle,0));
 	        		flipper3_phy.setPhysicsRotation(new Quaternion().fromAngles(0,flipper_geo_angle,0));
 	        		flipper5_phy.setPhysicsRotation(new Quaternion().fromAngles(0,flipper_geo_angle,0));
+        		} else {
+        			flipping=false;
         		}
     		} else {
     			flipper_geo_angle=1.1f;
+    			flipping=false;
     			
     			//-63 =>
     	        // 180 => Math.PI
@@ -300,15 +306,20 @@ public class HelloPinball extends SimpleApplication {
     			flipper5_phy.setPhysicsRotation(new Quaternion().fromAngles(0,flipper_geo_angle,0));
     		}
 			if (flip2) {
-    			// ça c'est fixe.
 				if (flipper2_geo_angle>=-Math.PI/2-1.1f) {
+					flipping2=true;
+	    			// ça c'est fixe.
 					flipper2_geo_angle-=0.003f;
 	        		flipper2_phy.setPhysicsRotation(new Quaternion().fromAngles(0,flipper2_geo_angle,0));
 	        		flipper4_phy.setPhysicsRotation(new Quaternion().fromAngles(0,flipper2_geo_angle,0));
 	        		flipper6_phy.setPhysicsRotation(new Quaternion().fromAngles(0,flipper2_geo_angle,0));
+        		} else {
+        			flipping2=false;
         		}
     		} else {
     			flipper2_geo_angle=-1.1f;
+    			flipping2=false;
+    			
     			//-63 =>
     	        // 180 => Math.PI
     			flipper2_phy.setPhysicsRotation(new Quaternion().fromAngles(0,flipper2_geo_angle,0));
