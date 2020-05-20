@@ -229,11 +229,15 @@ public class HelloPinball extends SimpleApplication {
 				}
 
 				private void collision(RigidBodyControl boule_phy, RigidBodyControl flipper_phy,Vector3f normal,boolean flipping) {
-					if (!flipping) return;
-					// flipper_phy.getLinearVelocity() toujours à 0,0,0 j'utilise normal du coup.
-					Vector3f Vab = boule_phy.getLinearVelocity().subtract(normal).add(new Vector3f(-10,0,0));
-					Vab.setY(0);
-					boule_phy.setLinearVelocity(Vab);
+					if (!flipping) {
+						//FIXME : normalement n'influ pas dans la balle, mais la balle reste "collée" au flip, donc on ne peut pas flipper plus tard.
+						boule_phy.setLinearVelocity(new Vector3f(-10,0,0));
+					} else {
+						// flipper_phy.getLinearVelocity() toujours à 0,0,0 j'utilise normal du coup.
+						Vector3f Vab = boule_phy.getLinearVelocity().subtract(normal).add(new Vector3f(-10,0,0));
+						Vab.setY(0);
+						boule_phy.setLinearVelocity(Vab);
+					}
 				}
 			});
         
