@@ -20,7 +20,8 @@ public class PinballBall extends Geometry {
 		/** Position the brick geometry  */
         setLocalTranslation(new Vector3f(0,10,-5.5f));
         /** Make brick physical with a mass > 0.0f. */
-        boule2_phy = new RigidBodyControl(8f);
+        // 80gramme (unité 1kg)
+        boule2_phy = new RigidBodyControl(0.08f);
         /** Add physical brick to physics space. */
         addControl(boule2_phy);
         bulletAppState.getPhysicsSpace().add(boule2_phy);
