@@ -1,5 +1,4 @@
 # HelloPinball JME3
-# Tested by Renaud
 
 Basé sur la vidéo CPC de Oldschool is beautiful : http://www.youtube.com/watch?v=88MaOZglJQA
 
