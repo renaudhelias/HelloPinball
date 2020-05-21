@@ -31,6 +31,9 @@
  */
 package jme3test.animation.hellopinball;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
@@ -62,7 +65,8 @@ public class HelloPinball extends SimpleApplication {
 
 	private boolean flipping2Render;
 	private boolean flippingRender;
-	private Vector3f flipperNormal;
+	private Vector3f flipper2Normal;
+	private Vector3f flipper1Normal;
     private boolean flip;
     private boolean flipping;
     private boolean flip2;
@@ -94,13 +98,17 @@ public class HelloPinball extends SimpleApplication {
         app.setShowSettings(false);
         app.setDisplayFps(false);
         app.setDisplayStatView(false);
+        
         app.start();
     }
 
     @Override
     public void simpleInitApp() {
-    	
-
+    	GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        settings.setFullscreen(device.isFullScreenSupported());
+        setSettings(settings);
+        restart();
+        
         bulletAppState = new BulletAppState();
         stateManager.attach(bulletAppState);
         
@@ -215,12 +223,41 @@ public class HelloPinball extends SimpleApplication {
 						nonBoule=b;
 					}
 					
-					flipperNormal = event.getNormalWorldOnB();
+					Vector3f flipperNormal = event.getNormalWorldOnB();
 					if (nonBoule==b) flipperNormal=flipperNormal.negate();
 					
 					if (nonBoule.getObjectId()==lanceur_phy.getObjectId()) {
 						boule_phy.setLinearVelocity(new Vector3f(-23+(float)Math.random(),0,0));
 					}
+					
+					
+//					
+//		    		if (nonBoule.getObjectId()==flipper_phy.getObjectId()) {
+//		    			collision1(boule_phy,flipper_phy,flipperNormal);
+//		    			flipper1Normal=flipperNormal;
+//		    		}
+//		    		if (nonBoule.getObjectId()==flipper2_phy.getObjectId()) {
+//		    			collision2(boule_phy,flipper2_phy,flipperNormal);
+//		    			flipper2Normal=flipperNormal;
+//		    		}
+//		    		if (nonBoule.getObjectId()==flipper3_phy.getObjectId()) {
+//		    			collision1(boule_phy,flipper3_phy,flipperNormal);
+//		    			flipper1Normal=flipperNormal;
+//		    		}
+//		    		if (nonBoule.getObjectId()==flipper4_phy.getObjectId()) {
+//		    			collision2(boule_phy,flipper4_phy,flipperNormal);
+//		    			flipper2Normal=flipperNormal;
+//		    		}
+//		    		if (nonBoule.getObjectId()==flipper5_phy.getObjectId()) {
+//		    			collision1(boule_phy,flipper5_phy,flipperNormal);
+//		    			flipper1Normal=flipperNormal;
+//		    		}
+//		    		if (nonBoule.getObjectId()==flipper6_phy.getObjectId()) {
+//		    			collision2(boule_phy,flipper6_phy,flipperNormal);
+//		    			flipper2Normal=flipperNormal;
+//		    		}
+
+					
 				}
 
 			});
@@ -282,33 +319,51 @@ public class HelloPinball extends SimpleApplication {
     		// check collision
     		CollisionResults results=new CollisionResults();
     		ball.getWorldBound().collideWith(flipper_geo.getWorldBound(), results);
-    		if (results.size()>0) {
-    			collision(boule_phy,flipper_phy,flipperNormal);
+    		if (results.size()>0 ) {
+//    			collision1(boule_phy,flipper_phy,flipper1Normal);
+    			Triangle tri = new Triangle();
+    			flipper_geo.getMesh().getTriangle(results.getClosestCollision().getTriangleIndex(),tri);
+    			collision1(boule_phy,flipper_phy,tri.getNormal());
     		}
     		ball.getWorldBound().collideWith(flipper2_geo.getWorldBound(), results);
-    		if (results.size()>0) {
-    			collision2(boule_phy,flipper2_phy,flipperNormal);
+    		if (results.size()>0 ) {
+//    			collision2(boule_phy,flipper2_phy,flipper2Normal);
+    			Triangle tri = new Triangle();
+    			flipper2_geo.getMesh().getTriangle(results.getClosestCollision().getTriangleIndex(),tri);
+    			collision2(boule_phy,flipper2_phy,tri.getNormal());
     		}
     		ball.getWorldBound().collideWith(flipper3_geo.getWorldBound(), results);
-    		if (results.size()>0) {
-    			collision(boule_phy,flipper3_phy,flipperNormal);
-    		}
+    		if (results.size()>0 ) {
+//    			collision1(boule_phy,flipper3_phy,flipper1Normal);
+    			Triangle tri = new Triangle();
+    			flipper3_geo.getMesh().getTriangle(results.getClosestCollision().getTriangleIndex(),tri);
+    			collision1(boule_phy,flipper3_phy,tri.getNormal());
+       		}
     		ball.getWorldBound().collideWith(flipper4_geo.getWorldBound(), results);
-    		if (results.size()>0) {
-    			collision2(boule_phy,flipper4_phy,flipperNormal);
-    		}
+    		if (results.size()>0 ) {
+//    			collision2(boule_phy,flipper4_phy,flipper2Normal);
+    			Triangle tri = new Triangle();
+    			flipper4_geo.getMesh().getTriangle(results.getClosestCollision().getTriangleIndex(),tri);
+    			collision2(boule_phy,flipper4_phy,tri.getNormal());
+       		}
     		ball.getWorldBound().collideWith(flipper5_geo.getWorldBound(), results);
-    		if (results.size()>0) {
-    			collision(boule_phy,flipper5_phy,flipperNormal);
-    		}
+    		if (results.size()>0 ) {
+//    			collision1(boule_phy,flipper5_phy,flipper1Normal);
+    			Triangle tri = new Triangle();
+    			flipper5_geo.getMesh().getTriangle(results.getClosestCollision().getTriangleIndex(),tri);
+    			collision1(boule_phy,flipper5_phy,tri.getNormal());
+       		}
     		ball.getWorldBound().collideWith(flipper6_geo.getWorldBound(), results);
-    		if (results.size()>0) {
-    			collision2(boule_phy,flipper6_phy,flipperNormal);
-    		}
+    		if (results.size()>0 ) {
+//    			collision2(boule_phy,flipper6_phy,flipper2Normal);
+    			Triangle tri = new Triangle();
+    			flipper6_geo.getMesh().getTriangle(results.getClosestCollision().getTriangleIndex(),tri);
+    			collision2(boule_phy,flipper6_phy,tri.getNormal());
+       		}
     		
     		 
     		//flip : touche appuyé
-    		//flipping : déplacement en cours (donc super launch)
+    		//flfipping : déplacement en cours (donc super launch)
     		//flippingDone : fin de déplacement (freeze)
     		
     		
@@ -361,7 +416,7 @@ public class HelloPinball extends SimpleApplication {
     	counter+=tpf;
     }
 
-	void collision(RigidBodyControl boule_phy, RigidBodyControl flipper_phy,Vector3f normal) {
+	void collision1(RigidBodyControl boule_phy, RigidBodyControl flipper_phy,Vector3f normal) {
 		if (!flipping) {
 		} else {
 			// flipper_phy.getLinearVelocity() toujours à 0,0,0 j'utilise normal du coup.
