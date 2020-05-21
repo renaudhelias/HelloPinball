@@ -99,6 +99,9 @@ public class HelloPinball extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
+    	
+    	speed=1.5f ;
+    	
     	GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         settings.setFullscreen(device.isFullScreenSupported());
         setSettings(settings);
