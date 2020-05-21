@@ -196,16 +196,6 @@ public class HelloPinball extends SimpleApplication {
 		rootNode2.attachChild(lanceur_geo);
 		lanceur_phy=lanceur_geo.getPhysic();
 		
-		Mesh mesh = new Mesh();
-		mesh.setMode(Mesh.Mode.Lines);
-		mesh.setBuffer(VertexBuffer.Type.Position, 3, new float[]{ 0, 0, 0, 0, 10, 0});
-		mesh.setBuffer(VertexBuffer.Type.Index, 2, new short[]{ 0, 1 });
-		Geometry geo = new Geometry("line", mesh);
-		geo.setMaterial(mat);
-		rootNode.attachChild(geo);
-		
-		
-		
 		 bulletAppState.getPhysicsSpace().addCollisionListener(new PhysicsCollisionListener() {
 				
 				
