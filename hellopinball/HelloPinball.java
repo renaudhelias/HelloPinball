@@ -40,7 +40,6 @@ import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.ChaseCamera;
 import com.jme3.input.KeyInput;
@@ -54,8 +53,6 @@ import com.jme3.math.Triangle;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.CameraNode;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
-import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.control.CameraControl.ControlDirection;
 import com.jme3.scene.shape.Box;
 import com.jme3.texture.Texture;
@@ -65,9 +62,7 @@ public class HelloPinball extends SimpleApplication {
 
 	private boolean flipping2Render;
 	private boolean flippingRender;
-	private Vector3f flipper2Normal;
-	private Vector3f flipper1Normal;
-    private boolean flip;
+	private boolean flip;
     private boolean flipping;
     private boolean flip2;
     private boolean flipping2;
@@ -84,7 +79,7 @@ public class HelloPinball extends SimpleApplication {
 	private RigidBodyControl flipper6_phy;
 	private PinballLauncher lanceur_geo;
 	private RigidBodyControl lanceur_phy;
-	private RigidBodyControl boule_phy;
+	private RigidBodyControl ball_phy;
 	private PinballBall ball;
 	private Geometry flipper_geo;
 	private Geometry flipper2_geo;
@@ -160,7 +155,7 @@ public class HelloPinball extends SimpleApplication {
         
         ball = new PinballBall();
         ball.init(bulletAppState, mat);
-        boule_phy=ball.getPhysic();
+        ball_phy=ball.getPhysic();
         rootNode.attachChild(ball);
         
         PinballFlipper flipper = new PinballFlipper();
@@ -216,48 +211,19 @@ public class HelloPinball extends SimpleApplication {
 					PhysicsCollisionObject b = event.getObjectB();
 					PhysicsCollisionObject nonBoule = null;
 					
-					if (b.getObjectId() == boule_phy.getObjectId()) {
+					if (b.getObjectId() == ball_phy.getObjectId()) {
 						nonBoule=a;
 					}
-					if (a.getObjectId() == boule_phy.getObjectId()) {
+					if (a.getObjectId() == ball_phy.getObjectId()) {
 						nonBoule=b;
 					}
 					
-					Vector3f flipperNormal = event.getNormalWorldOnB();
-					if (nonBoule==b) flipperNormal=flipperNormal.negate();
+//					Vector3f flipperNormal = event.getNormalWorldOnB();
+//					if (nonBoule==b) flipperNormal=flipperNormal.negate();
 					
 					if (nonBoule.getObjectId()==lanceur_phy.getObjectId()) {
-						boule_phy.setLinearVelocity(new Vector3f(-23+(float)Math.random(),0,0));
+						ball_phy.setLinearVelocity(new Vector3f(-23+(float)Math.random(),0,0));
 					}
-					
-					
-//					
-//		    		if (nonBoule.getObjectId()==flipper_phy.getObjectId()) {
-//		    			collision1(boule_phy,flipper_phy,flipperNormal);
-//		    			flipper1Normal=flipperNormal;
-//		    		}
-//		    		if (nonBoule.getObjectId()==flipper2_phy.getObjectId()) {
-//		    			collision2(boule_phy,flipper2_phy,flipperNormal);
-//		    			flipper2Normal=flipperNormal;
-//		    		}
-//		    		if (nonBoule.getObjectId()==flipper3_phy.getObjectId()) {
-//		    			collision1(boule_phy,flipper3_phy,flipperNormal);
-//		    			flipper1Normal=flipperNormal;
-//		    		}
-//		    		if (nonBoule.getObjectId()==flipper4_phy.getObjectId()) {
-//		    			collision2(boule_phy,flipper4_phy,flipperNormal);
-//		    			flipper2Normal=flipperNormal;
-//		    		}
-//		    		if (nonBoule.getObjectId()==flipper5_phy.getObjectId()) {
-//		    			collision1(boule_phy,flipper5_phy,flipperNormal);
-//		    			flipper1Normal=flipperNormal;
-//		    		}
-//		    		if (nonBoule.getObjectId()==flipper6_phy.getObjectId()) {
-//		    			collision2(boule_phy,flipper6_phy,flipperNormal);
-//		    			flipper2Normal=flipperNormal;
-//		    		}
-
-					
 				}
 
 			});
@@ -315,50 +281,43 @@ public class HelloPinball extends SimpleApplication {
     public void simpleUpdate(float tpf) {
     	if (Math.floor(counter/(10f*25.0f))<=Math.floor(counter/(10*25.0f)+tpf/(10f*25.0f))) {
     		
-    		
     		// check collision
     		CollisionResults results=new CollisionResults();
     		ball.getWorldBound().collideWith(flipper_geo.getWorldBound(), results);
     		if (results.size()>0 ) {
-//    			collision1(boule_phy,flipper_phy,flipper1Normal);
     			Triangle tri = new Triangle();
-    			flipper_geo.getMesh().getTriangle(results.getClosestCollision().getTriangleIndex(),tri);
-    			collision1(boule_phy,flipper_phy,tri.getNormal());
+    			ball.getMesh().getTriangle(results.getClosestCollision().getTriangleIndex(),tri);
+    			collision1(ball_phy,flipper_phy,tri.getNormal().getY()>0 ? tri.getNormal().negate() : tri.getNormal());
     		}
     		ball.getWorldBound().collideWith(flipper2_geo.getWorldBound(), results);
     		if (results.size()>0 ) {
-//    			collision2(boule_phy,flipper2_phy,flipper2Normal);
     			Triangle tri = new Triangle();
-    			flipper2_geo.getMesh().getTriangle(results.getClosestCollision().getTriangleIndex(),tri);
-    			collision2(boule_phy,flipper2_phy,tri.getNormal());
+    			ball.getMesh().getTriangle(results.getClosestCollision().getTriangleIndex(),tri);
+    			collision2(ball_phy,flipper2_phy,tri.getNormal().getY()>0 ? tri.getNormal().negate() : tri.getNormal());
     		}
     		ball.getWorldBound().collideWith(flipper3_geo.getWorldBound(), results);
     		if (results.size()>0 ) {
-//    			collision1(boule_phy,flipper3_phy,flipper1Normal);
     			Triangle tri = new Triangle();
-    			flipper3_geo.getMesh().getTriangle(results.getClosestCollision().getTriangleIndex(),tri);
-    			collision1(boule_phy,flipper3_phy,tri.getNormal());
+    			ball.getMesh().getTriangle(results.getClosestCollision().getTriangleIndex(),tri);
+    			collision1(ball_phy,flipper3_phy,tri.getNormal().getY()>0 ? tri.getNormal().negate() : tri.getNormal());
        		}
     		ball.getWorldBound().collideWith(flipper4_geo.getWorldBound(), results);
     		if (results.size()>0 ) {
-//    			collision2(boule_phy,flipper4_phy,flipper2Normal);
     			Triangle tri = new Triangle();
-    			flipper4_geo.getMesh().getTriangle(results.getClosestCollision().getTriangleIndex(),tri);
-    			collision2(boule_phy,flipper4_phy,tri.getNormal());
+    			ball.getMesh().getTriangle(results.getClosestCollision().getTriangleIndex(),tri);
+    			collision2(ball_phy,flipper4_phy,tri.getNormal().getY()>0 ? tri.getNormal().negate() : tri.getNormal());
        		}
     		ball.getWorldBound().collideWith(flipper5_geo.getWorldBound(), results);
     		if (results.size()>0 ) {
-//    			collision1(boule_phy,flipper5_phy,flipper1Normal);
     			Triangle tri = new Triangle();
-    			flipper5_geo.getMesh().getTriangle(results.getClosestCollision().getTriangleIndex(),tri);
-    			collision1(boule_phy,flipper5_phy,tri.getNormal());
+    			ball.getMesh().getTriangle(results.getClosestCollision().getTriangleIndex(),tri);
+    			collision1(ball_phy,flipper5_phy,tri.getNormal().getY()>0 ? tri.getNormal().negate() : tri.getNormal());
        		}
     		ball.getWorldBound().collideWith(flipper6_geo.getWorldBound(), results);
     		if (results.size()>0 ) {
-//    			collision2(boule_phy,flipper6_phy,flipper2Normal);
     			Triangle tri = new Triangle();
-    			flipper6_geo.getMesh().getTriangle(results.getClosestCollision().getTriangleIndex(),tri);
-    			collision2(boule_phy,flipper6_phy,tri.getNormal());
+    			ball.getMesh().getTriangle(results.getClosestCollision().getTriangleIndex(),tri);
+    			collision2(ball_phy,flipper6_phy,tri.getNormal().getY()>0 ? tri.getNormal().negate() : tri.getNormal());
        		}
     		
     		 
@@ -431,8 +390,9 @@ public class HelloPinball extends SimpleApplication {
 		if (!flipping2) {
 		} else {
 			// flipper_phy.getLinearVelocity() toujours à 0,0,0 j'utilise normal du coup.
-			Vector3f Vab = boule_phy.getLinearVelocity().subtract(normal).mult(5);//.add(new Vector3f(-10,0,0));
+			Vector3f Vab = boule_phy.getLinearVelocity().subtract(normal).add(new Vector3f(-10,0,0));
 			Vab.setY(0);
+			
 			boule_phy.setLinearVelocity(Vab);
 			flipping2=false;
 		}
