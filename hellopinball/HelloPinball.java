@@ -386,7 +386,7 @@ public class HelloPinball extends SimpleApplication {
 		if (!flipping2) {
 		} else {
 			// flipper_phy.getLinearVelocity() toujours à 0,0,0 j'utilise normal du coup.
-			Vector3f Vab = boule_phy.getLinearVelocity().subtract(normal).add(new Vector3f(-10,0,0));
+			Vector3f Vab = boule_phy.getLinearVelocity().subtract(normal).mult(5);//.add(new Vector3f(-10,0,0));
 			Vab.setY(0);
 			boule_phy.setLinearVelocity(Vab);
 			flipping2=false;
