@@ -37,6 +37,8 @@ import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.jme3.collision.CollisionResults;
 import com.jme3.input.ChaseCamera;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -45,6 +47,7 @@ import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Triangle;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.CameraNode;
 import com.jme3.scene.Geometry;
@@ -56,6 +59,10 @@ import com.jme3.texture.Texture;
 
 public class HelloPinball extends SimpleApplication {
 
+
+	private boolean flipping2Render;
+	private boolean flippingRender;
+	private Vector3f flipperNormal;
     private boolean flip;
     private boolean flipping;
     private boolean flip2;
@@ -75,6 +82,12 @@ public class HelloPinball extends SimpleApplication {
 	private RigidBodyControl lanceur_phy;
 	private RigidBodyControl boule_phy;
 	private PinballBall ball;
+	private Geometry flipper_geo;
+	private Geometry flipper2_geo;
+	private Geometry flipper3_geo;
+	private Geometry flipper4_geo;
+	private Geometry flipper5_geo;
+	private Geometry flipper6_geo;
 
     public static void main(String[] args) {
         HelloPinball app = new HelloPinball();
@@ -145,31 +158,37 @@ public class HelloPinball extends SimpleApplication {
         PinballFlipper flipper = new PinballFlipper();
         flipper.init(bulletAppState, mat,new Vector3f(0.3f,0,0),new Vector3f(5f, 1, -1.0f),true);
         flipper_phy=flipper.getPhysic();
+        flipper_geo=flipper.getGeo();
 		rootNode2.attachChild(flipper);
 
         PinballFlipper flipper2 = new PinballFlipper();
         flipper2.init(bulletAppState, mat,new Vector3f(0.3f,0,0),new Vector3f(5f, 1, -3.5f),false);
         flipper2_phy=flipper2.getPhysic();
+        flipper2_geo=flipper2.getGeo();
         rootNode2.attachChild(flipper2);
 
         PinballFlipper flipper3 = new PinballFlipper();
         flipper3.init(bulletAppState, mat,new Vector3f(0.3f,0,0),new Vector3f(5f, 1, 2.5f),true);
         flipper3_phy=flipper3.getPhysic();
+        flipper3_geo=flipper3.getGeo();
 		rootNode2.attachChild(flipper3);
 
         PinballFlipper flipper4 = new PinballFlipper();
         flipper4.init(bulletAppState, mat,new Vector3f(0.3f,0,0),new Vector3f(5f, 1, 0.0f),false);
         flipper4_phy=flipper4.getPhysic();
+        flipper4_geo=flipper4.getGeo();
         rootNode2.attachChild(flipper4);
         
         PinballFlipper flipper5 = new PinballFlipper();
         flipper5.init(bulletAppState, mat,new Vector3f(0.3f,0,0),new Vector3f(-0.75f, 1, 4.25f),true);
         flipper5_phy=flipper5.getPhysic();
+        flipper5_geo=flipper5.getGeo();
 		rootNode2.attachChild(flipper5);
 
         PinballFlipper flipper6 = new PinballFlipper();
         flipper6.init(bulletAppState, mat,new Vector3f(0.3f,0,0),new Vector3f(-0.75f, 1, 1.75f),false);
         flipper6_phy=flipper6.getPhysic();
+        flipper6_geo=flipper6.getGeo();
         rootNode2.attachChild(flipper6);
 		
 		lanceur_geo = new PinballLauncher();
@@ -185,15 +204,19 @@ public class HelloPinball extends SimpleApplication {
 		geo.setMaterial(mat);
 		rootNode.attachChild(geo);
 		
+		
+		
 		 bulletAppState.getPhysicsSpace().addCollisionListener(new PhysicsCollisionListener() {
 				
+				
+
+				
+
 				@Override
 				public void collision(PhysicsCollisionEvent event) {
 					PhysicsCollisionObject a = event.getObjectA();
 					PhysicsCollisionObject b = event.getObjectB();
 					PhysicsCollisionObject nonBoule = null;
-					
-					
 					
 					if (b.getObjectId() == boule_phy.getObjectId()) {
 						nonBoule=a;
@@ -202,43 +225,14 @@ public class HelloPinball extends SimpleApplication {
 						nonBoule=b;
 					}
 					
-					Vector3f normal = event.getNormalWorldOnB();
-					if (nonBoule==b) normal=normal.negate();
+					flipperNormal = event.getNormalWorldOnB();
+					if (nonBoule==b) flipperNormal=flipperNormal.negate();
 					
 					if (nonBoule.getObjectId()==lanceur_phy.getObjectId()) {
 						boule_phy.setLinearVelocity(new Vector3f(-23+(float)Math.random(),0,0));
 					}
-					if (nonBoule.getObjectId()==flipper_phy.getObjectId()) {
-						collision(boule_phy,flipper_phy,normal,flipping);
-					}
-					if (nonBoule.getObjectId()==flipper2_phy.getObjectId()) {
-						collision(boule_phy,flipper2_phy,normal,flipping2);
-					}
-					if (nonBoule.getObjectId()==flipper3_phy.getObjectId()) {
-						collision(boule_phy,flipper3_phy,normal,flipping);
-					}
-					if (nonBoule.getObjectId()==flipper4_phy.getObjectId()) {
-						collision(boule_phy,flipper4_phy,normal,flipping2);
-					}
-					if (nonBoule.getObjectId()==flipper5_phy.getObjectId()) {
-						collision(boule_phy,flipper5_phy,normal,flipping);
-					}
-					if (nonBoule.getObjectId()==flipper6_phy.getObjectId()) {
-						collision(boule_phy,flipper6_phy,normal,flipping2);
-					}
 				}
 
-				private void collision(RigidBodyControl boule_phy, RigidBodyControl flipper_phy,Vector3f normal,boolean flipping) {
-					if (!flipping) {
-						//FIXME : normalement n'influ pas dans la balle, mais la balle reste "collée" au flip, donc on ne peut pas flipper plus tard.
-						boule_phy.setLinearVelocity(new Vector3f(-10,0,0));
-					} else {
-						// flipper_phy.getLinearVelocity() toujours à 0,0,0 j'utilise normal du coup.
-						Vector3f Vab = boule_phy.getLinearVelocity().subtract(normal).add(new Vector3f(-10,0,0));
-						Vab.setY(0);
-						boule_phy.setLinearVelocity(Vab);
-					}
-				}
 			});
         
 		 
@@ -265,13 +259,19 @@ public class HelloPinball extends SimpleApplication {
         inputManager.addMapping("flip2", new KeyTrigger(KeyInput.KEY_H));
         ActionListener acl = new ActionListener() {
 
+
+
 			@Override
             public void onAction(String name, boolean keyPressed, float tpf) {
                 if (name.equals("flip")) {
                 	flip=keyPressed;
+                	flipping=keyPressed;
+                	flippingRender=(keyPressed?true:flippingRender);
                 }
                 if (name.equals("flip2")) {
                 	flip2=keyPressed;
+                	flipping2=keyPressed;
+                	flipping2Render=(keyPressed?true:flipping2Render);
                 }
                 if (name.equals("relancer")) {
                 	ball.getPhysic().setPhysicsLocation(new Vector3f(0,10,-5.5f));
@@ -288,11 +288,47 @@ public class HelloPinball extends SimpleApplication {
     public void simpleUpdate(float tpf) {
     	if (Math.floor(counter/(10f*25.0f))<=Math.floor(counter/(10*25.0f)+tpf/(10f*25.0f))) {
     		
+    		
+    		// check collision
+    		CollisionResults results=new CollisionResults();
+    		ball.getWorldBound().collideWith(flipper_geo.getWorldBound(), results);
+    		if (results.size()>0) {
+    			collision(boule_phy,flipper_phy,flipperNormal);
+    		}
+    		ball.getWorldBound().collideWith(flipper2_geo.getWorldBound(), results);
+    		if (results.size()>0) {
+    			collision2(boule_phy,flipper2_phy,flipperNormal);
+    		}
+    		ball.getWorldBound().collideWith(flipper3_geo.getWorldBound(), results);
+    		if (results.size()>0) {
+    			collision(boule_phy,flipper3_phy,flipperNormal);
+    		}
+    		ball.getWorldBound().collideWith(flipper4_geo.getWorldBound(), results);
+    		if (results.size()>0) {
+    			collision2(boule_phy,flipper4_phy,flipperNormal);
+    		}
+    		ball.getWorldBound().collideWith(flipper5_geo.getWorldBound(), results);
+    		if (results.size()>0) {
+    			collision(boule_phy,flipper5_phy,flipperNormal);
+    		}
+    		ball.getWorldBound().collideWith(flipper6_geo.getWorldBound(), results);
+    		if (results.size()>0) {
+    			collision2(boule_phy,flipper6_phy,flipperNormal);
+    		}
+    		
+    		 
+    		//flip : touche appuyé
+    		//flipping : déplacement en cours (donc super launch)
+    		//flippingDone : fin de déplacement (freeze)
+    		
+    		
+    		// si je lance plus tard ça laisse bouger la bille jusqu'à ce que j'appui.
+    		
     		if (flip) {
-    			if (flipper_geo_angle<=Math.PI/2+1.1f) {
-	    			flipping=true;
+				if (flippingRender && flipper_geo_angle<=Math.PI/2+1.1f) {
 	    			// ça c'est fixe.
-	    			flipper_geo_angle+=0.003f;
+					
+					flipper_geo_angle+=0.003f;
 	        		flipper_phy.setPhysicsRotation(new Quaternion().fromAngles(0,flipper_geo_angle,0));
 	        		flipper3_phy.setPhysicsRotation(new Quaternion().fromAngles(0,flipper_geo_angle,0));
 	        		flipper5_phy.setPhysicsRotation(new Quaternion().fromAngles(0,flipper_geo_angle,0));
@@ -302,6 +338,7 @@ public class HelloPinball extends SimpleApplication {
     		} else {
     			flipper_geo_angle=1.1f;
     			flipping=false;
+    			flippingRender=false;
     			
     			//-63 =>
     	        // 180 => Math.PI
@@ -310,9 +347,8 @@ public class HelloPinball extends SimpleApplication {
     			flipper5_phy.setPhysicsRotation(new Quaternion().fromAngles(0,flipper_geo_angle,0));
     		}
 			if (flip2) {
-				if (flipper2_geo_angle>=-Math.PI/2-1.1f) {
-					flipping2=true;
-	    			// ça c'est fixe.
+				if (flipping2Render && flipper2_geo_angle>=-Math.PI/2-1.1f) {
+					// ça c'est fixe.
 					flipper2_geo_angle-=0.003f;
 	        		flipper2_phy.setPhysicsRotation(new Quaternion().fromAngles(0,flipper2_geo_angle,0));
 	        		flipper4_phy.setPhysicsRotation(new Quaternion().fromAngles(0,flipper2_geo_angle,0));
@@ -323,6 +359,7 @@ public class HelloPinball extends SimpleApplication {
     		} else {
     			flipper2_geo_angle=-1.1f;
     			flipping2=false;
+    			flipping2Render=false;
     			
     			//-63 =>
     	        // 180 => Math.PI
@@ -333,4 +370,27 @@ public class HelloPinball extends SimpleApplication {
     	}
     	counter+=tpf;
     }
+
+	void collision(RigidBodyControl boule_phy, RigidBodyControl flipper_phy,Vector3f normal) {
+		if (!flipping) {
+		} else {
+			// flipper_phy.getLinearVelocity() toujours à 0,0,0 j'utilise normal du coup.
+			Vector3f Vab = boule_phy.getLinearVelocity().subtract(normal).add(new Vector3f(-10,0,0));
+			Vab.setY(0);
+			boule_phy.setLinearVelocity(Vab);
+			flipping=false;
+		}
+	}
+
+	void collision2(RigidBodyControl boule_phy, RigidBodyControl flipper_phy,Vector3f normal) {
+		if (!flipping2) {
+		} else {
+			// flipper_phy.getLinearVelocity() toujours à 0,0,0 j'utilise normal du coup.
+			Vector3f Vab = boule_phy.getLinearVelocity().subtract(normal).add(new Vector3f(-10,0,0));
+			Vab.setY(0);
+			boule_phy.setLinearVelocity(Vab);
+			flipping2=false;
+		}
+	}
+
 }

@@ -25,8 +25,6 @@ public class PinballFlipper extends Node {
         brick_geo = new Geometry("brick", box);
         brick_geo.setMaterial(mat);
         
-        
-        
         /** Make brick physical with a mass > 0.0f. */
 		brick_phy = new RigidBodyControl(0f);
         /** Position the brick geometry  */
