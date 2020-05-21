@@ -1,7 +1,5 @@
 # HelloPinball JME3
 
-Basé sur la vidéo CPC de Oldschool is beautiful : http://www.youtube.com/watch?v=88MaOZglJQA
-
 __macadam.blend__
 
 ![macadam_rigidBody.jpg](macadam_rigidBody.jpg)
