@@ -34,7 +34,12 @@ package jme3test.animation.hellopinball;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 
+import com.jme3.app.DebugKeysAppState;
+import com.jme3.app.FlyCamAppState;
+import com.jme3.app.ResetStatsState;
 import com.jme3.app.SimpleApplication;
+import com.jme3.app.StatsAppState;
+import com.jme3.app.state.AppState;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
@@ -256,7 +261,8 @@ public class HelloPinball extends SimpleApplication {
     	inputManager.addMapping("relancer", new KeyTrigger(KeyInput.KEY_SPACE));
     	inputManager.addMapping("flip", new KeyTrigger(KeyInput.KEY_LSHIFT));
         inputManager.addMapping("flip2", new KeyTrigger(KeyInput.KEY_RSHIFT));
-        
+
+        stateManager.detach(stateManager.getState(FlyCamAppState.class));
         inputManager.setCursorVisible(false);
         
         ActionListener acl = new ActionListener() {
