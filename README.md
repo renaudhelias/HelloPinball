@@ -8,6 +8,6 @@ Je superpose des formes rectangulaire sur l'image de fond de Macadam Bumper CPC.
 
 __HelloPinball.java__
 
-Touche : F gauche, H droite, ESPACE relancer la balle.
+Touche : SHIFT gauche, SHIFT droite, ESPACE relancer la balle.
 
 La balle est lancée automatiquement.

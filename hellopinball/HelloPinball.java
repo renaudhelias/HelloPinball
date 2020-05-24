@@ -254,8 +254,11 @@ public class HelloPinball extends SimpleApplication {
 
     private void initInputs() {
     	inputManager.addMapping("relancer", new KeyTrigger(KeyInput.KEY_SPACE));
-    	inputManager.addMapping("flip", new KeyTrigger(KeyInput.KEY_F));
-        inputManager.addMapping("flip2", new KeyTrigger(KeyInput.KEY_H));
+    	inputManager.addMapping("flip", new KeyTrigger(KeyInput.KEY_LSHIFT));
+        inputManager.addMapping("flip2", new KeyTrigger(KeyInput.KEY_RSHIFT));
+        
+        inputManager.setCursorVisible(false);
+        
         ActionListener acl = new ActionListener() {
 
 
