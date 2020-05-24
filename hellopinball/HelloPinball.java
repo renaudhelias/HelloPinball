@@ -261,7 +261,7 @@ public class HelloPinball extends SimpleApplication {
     	inputManager.addMapping("relancer", new KeyTrigger(KeyInput.KEY_SPACE));
     	inputManager.addMapping("flip", new KeyTrigger(KeyInput.KEY_LSHIFT));
         inputManager.addMapping("flip2", new KeyTrigger(KeyInput.KEY_RSHIFT));
-
+        
         stateManager.detach(stateManager.getState(FlyCamAppState.class));
         inputManager.setCursorVisible(false);
         
